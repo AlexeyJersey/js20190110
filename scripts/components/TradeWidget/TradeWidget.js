@@ -12,12 +12,12 @@ export default class TradeWidget {
             this._updateDisplay(this._total);
         });
 
+        this._el.addEventListener('click', e => this._onConfirm(e));
+
         this._el.addEventListener('click', e => {
             if (!e.target.closest('.modal-close')) return;
             this.close();
         });
-
-        this._el.addEventListener('click', e => this._onConfirm(e));
     }
 
     _onConfirm(e) {
@@ -29,11 +29,34 @@ export default class TradeWidget {
         boughtCurrencyItem.price = this._currentItem.price;
         boughtCurrencyItem.amount = this._total;
 
-        this._onConfirmCallback(boughtCurrencyItem);
+        if (isNaN(this._total) || this._total <= 0) {
+            let input = this._el.querySelector('.input-field');
+            this._validateErrorShow(input);
+        } else {
+            this._onConfirmCallback(boughtCurrencyItem);
+        }
+    }
+
+    _validateErrorShow(input) {
+        let errorMessage = document.createElement('span');
+        errorMessage.classList.add('helper-text', 'red-text', 'text-darken-2', 'validation-error');
+        errorMessage.innerText = 'Amount field can not be empty, less or equal "0"';
+        input.append(errorMessage)
+    }
+
+    _validateErrorHide(input) {
+        if (input.querySelector('.validation-error')) {
+            let errorMessage = input.querySelector('.validation-error');
+            errorMessage.parentNode.removeChild(errorMessage);
+        }
     }
 
     close() {
-        this._el.querySelector('.modal').classList.remove('open');
+        let modal = this._el.querySelector('.modal');
+
+        if (!modal.querySelector('.validation-error')) {
+            modal.classList.remove('open');
+        }
     }
 
     trade(item) {
@@ -46,6 +69,9 @@ export default class TradeWidget {
     _updateDisplay(value) {
         this._totalEl = this._totalEl || this._el.querySelector('#item-total');
         this._totalEl.textContent = value;
+
+        let input = this._el.querySelector('.input-field');
+        this._validateErrorHide(input);
     }
 
     _render(item) {

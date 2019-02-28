@@ -12,9 +12,9 @@ export default class Portfolio {
 
     addItem(itemData) {
         let tbody = this._portfolioHistoryTable.tBodies[0];
-        console.log(itemData.name);
-        console.log(itemData.price);
-        console.log(itemData.amount);
+
+        this._balance = this._balance - itemData.amount;
+        this._portfolioWorth = this._portfolioWorth + itemData.amount;
 
         let tr = document.createElement('tr');
         tr.innerHTML = `
@@ -28,12 +28,23 @@ export default class Portfolio {
         tbody.append(tr);
 
         tbody.rows.length ? this._portfolioHistoryTable.classList.remove('hidden') : ''
+        this._updatePortfolioInfo(this._balance, this._portfolioWorth);
+    }
+
+    _updatePortfolioInfo(balanceValue, worthValue) {
+        this._portfolioInfo = this._el.querySelector('#portfolioInfo');
+
+        this._portfolioInfo.innerHTML = `
+            Current balance: ${balanceValue}
+            <br />
+            Portfolio Worth: ${worthValue}
+        `
     }
 
     _render() {
         this._el.innerHTML = `
       <div class="card-panel hoverable center-align">
-          <p>
+          <p id="portfolioInfo">
               Current balance: ${this._balance}
               <br />
               Portfolio Worth: ${this._portfolioWorth}
