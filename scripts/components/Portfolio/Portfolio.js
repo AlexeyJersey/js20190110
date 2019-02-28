@@ -28,10 +28,10 @@ export default class Portfolio {
         tbody.append(tr);
 
         tbody.rows.length ? this._portfolioHistoryTable.classList.remove('hidden') : ''
-        this._updatePortfolioInfo(this._balance, this._portfolioWorth);
+        this._updatePortfolioStatus(this._balance, this._portfolioWorth);
     }
 
-    _updatePortfolioInfo(balanceValue, worthValue) {
+    _updatePortfolioStatus(balanceValue, worthValue) {
         this._portfolioInfo = this._el.querySelector('#portfolioInfo');
 
         this._portfolioInfo.innerHTML = `
