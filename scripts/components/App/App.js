@@ -8,7 +8,7 @@ import DataService from '../../services/DataService.js';
 export default class App {
     constructor({element}) {
         this._el = element;
-        this._userBalance = 100000;
+        this._userBalance = prompt('How much money do you have?', '') || 100000;
 
         this._render();
 
