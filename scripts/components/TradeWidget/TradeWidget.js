@@ -1,22 +1,36 @@
 export default class TradeWidget {
-    constructor({element, onConfirm}) {
+    constructor({element, balance, onConfirm}) {
         this._el = element;
+        this._balance = balance;
         this._onConfirmCallback = onConfirm;
 
         this._el.addEventListener('input', e => {
             if (!e.target.closest('#amount')) return;
 
-            const value = e.target.value;
-            this._total = this._currentItem.price * Number(value);
+            let value = e.target.value;
 
-            this._updateDisplay(this._total);
+            if (!isNaN(+value)) {
+                this._total = this._currentItem.price * Number(value);
+
+                // if (this._balance >= this._total) {
+                    this._updateDisplay(this._total);
+                    // console.log('norm')
+                // } else {
+                //     console.log('NEnorm')
+                // }
+            } else {
+                this._validateErrorShow();
+            }
         });
 
         this._el.addEventListener('click', e => this._onConfirm(e));
 
         this._el.addEventListener('click', e => {
             if (!e.target.closest('.modal-close')) return;
-            this.close();
+
+            if (e.target.getAttribute('id') !== 'tradeWidgetBuy') {
+                this.close();
+            }
         });
     }
 
@@ -30,23 +44,29 @@ export default class TradeWidget {
         boughtCurrencyItem.amount = this._total;
 
         if (isNaN(this._total) || this._total <= 0) {
-            let input = this._el.querySelector('.input-field');
-            this._validateErrorShow(input);
+            this._validateErrorShow();
         } else {
             this._onConfirmCallback(boughtCurrencyItem);
+            this.close();
         }
     }
 
-    _validateErrorShow(input) {
-        let errorMessage = document.createElement('span');
-        errorMessage.classList.add('helper-text', 'red-text', 'text-darken-2', 'validation-error');
-        errorMessage.innerText = 'Amount field can not be empty, less or equal "0"';
-        input.append(errorMessage)
+    _validateErrorShow() {
+        this._elInput = this._el.querySelector('.input-field');
+
+        if (this._elInput.querySelector('.validation-error') === null) {
+            let errorMessage = document.createElement('span');
+            errorMessage.classList.add('helper-text', 'red-text', 'text-darken-2', 'validation-error');
+            errorMessage.innerText = 'Amount field can not be empty, less or equal "0", must be number';
+            this._elInput.append(errorMessage)
+        }
     }
 
-    _validateErrorHide(input) {
-        if (input.querySelector('.validation-error')) {
-            let errorMessage = input.querySelector('.validation-error');
+    _validateErrorHide() {
+        this._elInput = this._el.querySelector('.input-field');
+
+        if (this._elInput.querySelector('.validation-error')) {
+            let errorMessage = this._elInput.querySelector('.validation-error');
             errorMessage.parentNode.removeChild(errorMessage);
         }
     }
@@ -54,9 +74,7 @@ export default class TradeWidget {
     close() {
         let modal = this._el.querySelector('.modal');
 
-        if (!modal.querySelector('.validation-error')) {
-            modal.classList.remove('open');
-        }
+        modal.classList.remove('open');
     }
 
     trade(item) {
@@ -67,11 +85,12 @@ export default class TradeWidget {
     }
 
     _updateDisplay(value) {
-        this._totalEl = this._totalEl || this._el.querySelector('#item-total');
+        //not working after first call - commented
+        // this._totalEl = this._totalEl || this._el.querySelector('#item-total');
+        this._totalEl = this._el.querySelector('#item-total');
         this._totalEl.textContent = value;
 
-        let input = this._el.querySelector('.input-field');
-        this._validateErrorHide(input);
+        this._validateErrorHide();
     }
 
     _render(item) {

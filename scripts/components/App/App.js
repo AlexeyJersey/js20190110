@@ -8,7 +8,8 @@ import DataService from '../../services/DataService.js';
 export default class App {
     constructor({element}) {
         this._el = element;
-        this._userBalance = prompt('How much money do you have?', '') || 100000;
+        // this._userBalance = prompt('How much money do you have?', '') || 100000;
+        this._userBalance = 100000;
 
         this._render();
 
@@ -44,6 +45,7 @@ export default class App {
     _initTradeWidget() {
         this._tradeWidget = new TradeWidget({
             element: this._el.querySelector('[data-element="trade-widget"]'),
+            balance: this._userBalance,
             onConfirm: (boughtCurrencyItem) => {
                 this.__addItemToPortfolio(boughtCurrencyItem);
             }
