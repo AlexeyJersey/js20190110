@@ -36,3 +36,7 @@ form, form > div {
 .hidden {
     display: none !important;
 }
+
+.active {
+    color: #ff7d2a;
+}
