@@ -1,64 +1,60 @@
 import Table from '../Table/Table.js';
 import Portfolio from '../Portfolio/Portfolio.js';
 import TradeWidget from '../TradeWidget/TradeWidget.js';
-
-
 import DataService from '../../services/DataService.js';
 
 export default class App {
-    constructor({element}) {
-        this._el = element;
-        // this._userBalance = prompt('How much money do you have?', '') || 100000;
-        this._userBalance = 100000;
+  constructor({ element }) {
+    this._el = element;
+    this._userBalance = 10000;
 
-        this._render();
+    this._render();
 
-        this._data = DataService.getCurrencies();
+    DataService.getCurrencies((data) => {
+      this._data = data;
+      this._initTable(this._data);
+    });
 
-        this._initTable(this._data);
+    this._initPortfolio();
+    this._initTradeWidget();
+  }
 
-        this._initPortfolio();
-        this._initTradeWidget();
-    }
+  _initTable(data) {
+    this._table = new Table({
+      data,
+      element: this._el.querySelector('[data-element="table"]'),
+    })
 
-    _initTable(data) {
-        this._table = new Table({
-            data,
-            element: this._el.querySelector('[data-element="table"]'),
-            onRowClick: (id) => {
-                this._tradeItem(id);
-            },
-        })
-    }
+    this._table.on('rowClick', e => {
+      this._tradeItem(e.detail);
+    })
+  }
 
-    _initPortfolio() {
-        this._portfolio = new Portfolio({
-            element: this._el.querySelector('[data-element="portfolio"]'),
-            balance: this._userBalance,
-        });
-    }
+  _initPortfolio() {
+    this._portfolio = new Portfolio({
+      element: this._el.querySelector('[data-element="portfolio"]'),
+      balance: this._userBalance,
+    });
+  }
 
-    __addItemToPortfolio(item) {
-        this._portfolio.addItem(item);
-    }
+  _initTradeWidget() {
+    this._tradeWidget = new TradeWidget({
+      element: this._el.querySelector('[data-element="trade-widget"]'),
+    });
 
-    _initTradeWidget() {
-        this._tradeWidget = new TradeWidget({
-            element: this._el.querySelector('[data-element="trade-widget"]'),
-            balance: this._userBalance,
-            onConfirm: (boughtCurrencyItem) => {
-                this.__addItemToPortfolio(boughtCurrencyItem);
-            }
-        });
-    }
+    this._tradeWidget.on('buy', e => {
+      const { item, amount } = e.detail;
+      this._portfolio.addItem(item, amount);
+    })
+  }
 
-    _tradeItem(id) {
-        const coin = this._data.find(coin => coin.id === id);
-        this._tradeWidget.trade(coin);
-    }
+  _tradeItem(id) {
+    const coin = this._data.find(coin => coin.id === id);
+    this._tradeWidget.trade(coin);
+  }
 
-    _render() {
-        this._el.innerHTML = `
+  _render() {
+    this._el.innerHTML = `
       <div class="row">
           <div class="col s12">
               <h1>Tiny Crypto Market</h1>
@@ -72,5 +68,5 @@ export default class App {
       </div>
       <div data-element="trade-widget"></div>
     `
-    }
+  }
 }

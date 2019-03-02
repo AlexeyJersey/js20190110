@@ -1,66 +1,74 @@
 export default class Portfolio {
-    constructor({element, balance}) {
-        this._el = element;
+  constructor({ element, balance }) {
+    this._el = element;
+    this._balance = balance;
+    this._items = {};
 
-        this._balance = balance;
-        this._portfolioWorth = 0;
+    this._portfolioWorth = 0;
 
-        this._render();
+    this._render();
+  }
 
-        this._portfolioHistoryTable = this._el.querySelector('#portfolioHistory');
-    }
+  addItem(item, amount) {
+    const currentItem = this._items[item.id] || {
+      name: item.name,
+      id: item.id,
+      amount: 0,
+      total: 0,
+    };
+    currentItem.price = item.price;
+    currentItem.amount = currentItem.amount + amount;
+    currentItem.total = currentItem.price * currentItem.amount;
 
-    addItem(itemData) {
-        let tbody = this._portfolioHistoryTable.tBodies[0];
+    this._items[item.id] = currentItem;
+    const purchasePrice = item.price * amount;
+    this._balance = this._balance - purchasePrice;
 
-        this._balance = this._balance - itemData.amount;
-        this._portfolioWorth = this._portfolioWorth + itemData.amount;
+    this._portfolioWorth = Object.values(this._items).reduce((total, item) => {
+      return total + item.total;
+    }, 0);
 
-        let tr = document.createElement('tr');
-        tr.innerHTML = `
-        <tr>
-            <td>${itemData.name}</td>
-            <td>${itemData.price}</td>
-            <td>${itemData.amount}</td>
-        </tr>
-        `
+    this._render();
+  }
 
-        tbody.append(tr);
+  _render(data) {
+    const items = Object.values(this._items);
 
-        tbody.rows.length ? this._portfolioHistoryTable.classList.remove('hidden') : ''
-        this._updatePortfolioStatus(this._balance, this._portfolioWorth);
-    }
-
-    _updatePortfolioStatus(balanceValue, worthValue) {
-        this._portfolioInfo = this._el.querySelector('#portfolioInfo');
-
-        this._portfolioInfo.innerHTML = `
-            Current balance: ${balanceValue}
-            <br />
-            Portfolio Worth: ${worthValue}
-        `
-    }
-
-    _render() {
-        this._el.innerHTML = `
+    this._el.innerHTML = `
       <div class="card-panel hoverable center-align">
-          <p id="portfolioInfo">
+          <p>
               Current balance: ${this._balance}
               <br />
               Portfolio Worth: ${this._portfolioWorth}
           </p>
-          <table id="portfolioHistory" class="highlight hidden">
-            <thead>
-              <tr>
-                  <th>Name</th>
-                  <th>Price</th>
-                  <th>Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
+          ${
+            items.length === 0
+              ? ''
+              : `
+              <table class="highlight striped"> 
+                <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Amount</th>
+                      <th>Price</th>
+                      <th>Total</th>
+                  </tr>
+                </thead>
+        
+                <tbody>
+                    ${items.map(item => `
+                      <tr data-id="${item.id}">
+                          <td>${item.name}</td>
+                          <td>${item.amount}</td>
+                          <td>${item.price}</td>
+                          <td>${item.total}</td>
+                      </tr>
+                    `).join('')
+                  }
+                  </tbody>
+                </table>`
+          }
       </div>
     `
-    }
+  }
 }
