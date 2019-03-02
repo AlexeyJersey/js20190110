@@ -37,9 +37,9 @@ export default class Portfolio {
     this._el.innerHTML = `
       <div class="card-panel hoverable center-align">
           <p>
-              Current balance: ${this._balance}
+              Current balance: ${this._balance.toFixed(2)}
               <br />
-              Portfolio Worth: ${this._portfolioWorth}
+              Portfolio Worth: ${this._portfolioWorth.toFixed(2)}
           </p>
           ${
             items.length === 0
@@ -60,8 +60,8 @@ export default class Portfolio {
                       <tr data-id="${item.id}">
                           <td>${item.name}</td>
                           <td>${item.amount}</td>
-                          <td>${item.price}</td>
-                          <td>${item.total}</td>
+                          <td>${item.price.toFixed(2)}</td>
+                          <td>${item.total.toFixed(2)}</td>
                       </tr>
                     `).join('')
                   }
