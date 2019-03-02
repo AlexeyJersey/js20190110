@@ -6,6 +6,7 @@ export default class Portfolio {
 
     this._portfolioWorth = 0;
 
+
     this._render();
   }
 
@@ -29,6 +30,10 @@ export default class Portfolio {
     }, 0);
 
     this._render();
+  }
+
+  updatedBalance() {
+    return this._balance
   }
 
   _render(data) {

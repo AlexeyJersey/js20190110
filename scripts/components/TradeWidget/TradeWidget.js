@@ -50,15 +50,18 @@ export default class TradeWidget extends Component {
             const value = e.target.value;
             this._total = this._currentItem.price * Number(value);
 
-            console.log(this._userBalance);
-
             if (this._total <= this._userBalance) {
                 this._updateDisplay(this._total);
                 this.removeErrorMessage('.input-field');
             } else {
+                this._updateDisplay(this._total);
                 this.errorMessage('.input-field', 'Not enough money!');
             }
         })
+    }
+
+    toGetBalance(newBalance) {
+        this._userBalance = newBalance;
     }
 
     close() {
@@ -74,7 +77,7 @@ export default class TradeWidget extends Component {
 
     _updateDisplay(value) {
         this._totalEl = this._el.querySelector('#item-total');
-        this._totalEl.textContent = value;
+        this._totalEl.textContent = value.toFixed(2);
     }
 
     _render(item) {
@@ -83,7 +86,10 @@ export default class TradeWidget extends Component {
         <div class="modal-content">
           <h4>Buying ${item.name}:</h4>
           <p>
-            Current price: ${item.price}. Total: <span id="item-total">${this._total}</span>
+            Current price: ${item.price.toFixed(2)}. Total: <span id="item-total">${this._total.toFixed(2)}</span>
+          </p>
+          <p>
+            Balance: ${this._userBalance.toFixed(2)}
           </p>
 
           <div class="row">

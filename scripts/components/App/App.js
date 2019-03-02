@@ -6,7 +6,7 @@ import DataService from '../../services/DataService.js';
 export default class App {
   constructor({ element }) {
     this._el = element;
-    this._userBalance = 100000;
+    this._userBalance = 10000;
 
     this._render();
 
@@ -46,7 +46,9 @@ export default class App {
     this._tradeWidget.on('buy', e => {
       const { item, amount } = e.detail;
       this._portfolio.addItem(item, amount);
+      this._tradeWidget.toGetBalance(this._portfolio.updatedBalance())
     })
+
   }
 
   _tradeItem(id) {
