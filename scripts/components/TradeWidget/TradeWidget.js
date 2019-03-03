@@ -52,15 +52,37 @@ export default class TradeWidget extends Component {
 
             if (this._total <= this._userBalance) {
                 this._updateDisplay(this._total);
-                this.removeErrorMessage('.input-field');
+                this._removeErrorMessage('.input-field');
             } else {
                 this._updateDisplay(this._total);
-                this.errorMessage('.input-field', 'Not enough money!');
+                this._errorMessage('.input-field', 'Not enough money!');
             }
         })
     }
 
-    toGetBalance(newBalance) {
+    _errorMessage(inputClass, text) {
+        this._elInput = this._el.querySelector(inputClass);
+
+        let errorMessage = document.createElement('span');
+
+        if (this._elInput.querySelector('.validation-error') === null) {
+            errorMessage.classList.add('helper-text', 'red-text', 'text-darken-2', 'validation-error');
+            errorMessage.innerText = text;
+            this._elInput.append(errorMessage)
+        }
+    }
+
+    _removeErrorMessage(inputClass) {
+        this._elInput = this._el.querySelector(inputClass);
+
+        if (this._elInput.querySelector('.validation-error')) {
+            let errorMessage = this._elInput.querySelector('.validation-error');
+            errorMessage.remove();
+        }
+
+    }
+
+    updateBalance(newBalance) {
         this._userBalance = newBalance;
     }
 

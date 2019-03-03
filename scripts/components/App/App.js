@@ -46,7 +46,7 @@ export default class App {
     this._tradeWidget.on('buy', e => {
       const { item, amount } = e.detail;
       this._portfolio.addItem(item, amount);
-      this._tradeWidget.toGetBalance(this._portfolio.updatedBalance())
+      this._tradeWidget.updateBalance(this._portfolio.updatedBalance())
     })
 
   }
