@@ -85,15 +85,6 @@ export default class Table extends Component {
 
     }
 
-    __clearSearchInput(e) {
-        let target = e.target;
-        if (target.getAttribute('id') !== 'searchInputClear') return;
-
-        let input = document.querySelector('#searchInput');
-        input.value = '';
-        this._search();
-    }
-
     _search() {
         let input = document.querySelector('#searchInput');
         let filter = input.value.toUpperCase();
@@ -110,6 +101,15 @@ export default class Table extends Component {
                 tr[i].style.display = "none";
             }
         }
+    }
+
+    __clearSearchInput(e) {
+        let target = e.target;
+        if (target.getAttribute('id') !== 'searchInputClear') return;
+
+        let input = document.querySelector('#searchInput');
+        input.value = '';
+        this._search();
     }
 
     _render(data) {
