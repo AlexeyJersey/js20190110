@@ -149,7 +149,7 @@ const DataService = {
     // return data;
 
     DataService._sendRequest(COINS_URL, data => {
-      const firstTenData = data.slice(0, 20);
+      const firstTenData = data.slice(0, 10);
       // callback(firstTenData);
       DataService.getCurrenciesPrices(firstTenData, callback)
     })
