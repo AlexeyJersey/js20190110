@@ -10,10 +10,10 @@ export default class App {
 
     this._render();
 
-    DataService.getCurrencies((data) => {
+    DataService.getCurrencies().then(data => {
       this._data = data;
-      this._initTable(this._data);
-    });
+      this._initTable(data);
+    })
 
     this._initPortfolio();
     this._initTradeWidget();
