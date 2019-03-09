@@ -3,6 +3,7 @@ import Portfolio from '../Portfolio/Portfolio.js';
 import TradeWidget from '../TradeWidget/TradeWidget.js';
 import DataService from '../../services/DataService.js';
 import Filter from '../Filter/Filter.js';
+import Sort from '../Sort/Sort.js';
 
 export default class App {
   constructor({ element }) {
@@ -14,11 +15,12 @@ export default class App {
     DataService.getCurrencies().then(data => {
       this._data = data;
       this._initTable(data);
-    })
+    });
 
     this._initPortfolio();
     this._initTradeWidget();
     this._initFilter();
+    this._initSort();
   }
 
   _initTable(data) {
@@ -70,6 +72,17 @@ export default class App {
         });
           this._table.displayData(filteredData);
       });
+  }
+
+  _initSort() {
+    this._sort = new Sort({
+        element: this._el.querySelector('[data-element="table"]')
+    });
+
+    this._sort.on('click', e => {
+        this._sort._toSort(e);
+    });
+
   }
 
   _render() {
