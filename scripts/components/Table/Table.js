@@ -4,18 +4,20 @@ export default class Table extends Component {
     constructor({element, data}) {
         super({element});
 
-        this._render(data);
+        this.displayData(data);
 
         this._el.addEventListener('click', e => {
                 this._onRowClick(e);
                 this._sort(e);
-                this.__clearSearchInput(e);
         });
 
         this._el.addEventListener('input', e => {
             if (e.target.getAttribute('id') !== 'searchInput') return;
-            this._search(e);
         });
+    }
+
+    displayData(data) {
+        this._render(data);
     }
 
     _onRowClick(e) {
@@ -85,39 +87,8 @@ export default class Table extends Component {
 
     }
 
-    _search() {
-        let input = document.querySelector('#searchInput');
-        let filter = input.value.toUpperCase();
-        let table = document.querySelector('.data-table');
-        let tbody = table.tBodies[0];
-        let tr = tbody.rows;
-
-        for (let i = 0; i < tr.length; i++) {
-            let cell = tr[i].cells[0];
-            let name = cell.textContent || cell.innerText;
-            if (name.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
-
-    __clearSearchInput(e) {
-        let target = e.target;
-        if (target.getAttribute('id') !== 'searchInputClear') return;
-
-        let input = document.querySelector('#searchInput');
-        input.value = '';
-        this._search();
-    }
-
     _render(data) {
         this._el.innerHTML = `
-    <div class="search">
-        <input type="text" id="searchInput" placeholder="Search crypto by name">
-        <div class="search__clear" id="searchInputClear"></div>
-    </div>
     <table class="data-table highlight"> 
         <thead>
         <tr>
